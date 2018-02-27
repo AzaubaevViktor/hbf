@@ -3,3 +3,15 @@ class Token:
         self.line = line
         self.pos = pos
         self.word = word
+
+    def __str__(self):
+        return "({}) `{}`".format(
+            self.pos,
+            self.word
+        )
+
+    def __repr__(self):
+        return "<Token({}) `{}`>".format(
+            self.pos,
+            self.word
+        )

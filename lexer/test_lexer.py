@@ -1,6 +1,7 @@
 from pytest import raises
 
-from lexer.error import HBFLexerError
+from .error import HBFLexerError
+from .lexer import Lexer, Block
 from .line import Line
 
 
@@ -53,6 +54,54 @@ class TestLine:
         assert line.tokens[0].word == "level"
 
 
+simple_correct = """
+level 0 1
+    level 1 2
+level 0 3
+    level 1 4
+"""
+
+
+blocks_correct = """
+level 0 1
+    level 1 2
+    level 1 3
+        level 2 4
+    level 1 5
+        level 2 6
+
+level 0 8
+level 0 9
+"""
+
+blocks_incorrect = blocks_correct + """
+        level 2
+"""
+
+
 class TestLexer:
-    def test_lexer(self):
-        pass
+    def test_lexer_simple(self):
+        lexer = Lexer(simple_correct.split("\n"))
+        assert isinstance(lexer.tree, Block)
+        root = lexer.tree
+        assert isinstance(root.children, list)
+        assert len(root.children) == 2
+        assert len(root.children[0].children) == 1
+        assert len(root.children[1].children) == 1
+
+    def test_lexer_correct(self):
+        lexer = Lexer(blocks_correct.split("\n"))
+        assert isinstance(lexer.tree, Block)
+        root = lexer.tree
+        assert isinstance(root.children, list)
+        assert len(root.children) == 3
+
+        assert isinstance(root.children[0], Block)
+        assert isinstance(root.children[1], Line)
+        assert isinstance(root.children[2], Line)
+
+        assert len(root.children[0].children) == 3
+
+    def test_lexer_incorrect(self):
+        with raises(HBFLexerError, message="level error"):
+            Lexer(blocks_incorrect.split("\n"))

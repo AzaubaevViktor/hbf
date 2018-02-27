@@ -5,6 +5,8 @@ from .token import Token
 
 
 class Line:
+    LEVEL_SPACES = 4
+
     def __init__(self, line_no, line):
         self.line_no = line_no
 
@@ -30,9 +32,11 @@ class Line:
                 break
 
         if _level % 4 == 0:
-            self.level = _level / 4
+            self.level = _level // self.LEVEL_SPACES
         else:
-            raise HBFLexerError(self, None, "Use 4 spaces for indent!", pos=_level)
+            raise HBFLexerError(self, None,
+                                "Use {} spaces for indent!".format(self.LEVEL_SPACES),
+                                pos=_level)
 
     @staticmethod
     def _split(line: str) -> Iterable[Tuple[int, str]]:
@@ -49,5 +53,11 @@ class Line:
 
         if word:
             yield word_pos, word
+
+    def __repr__(self):
+        return "<Line({}) [{}]>".format(
+            self.line_no,
+            ", ".join(map(str, self.tokens))
+        )
 
 
