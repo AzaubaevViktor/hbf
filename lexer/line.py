@@ -54,10 +54,47 @@ class Line:
         if word:
             yield word_pos, word
 
+    @property
+    def first(self):
+        return self.tokens[0]
+
+    @property
+    def args(self):
+        return self.tokens[1:]
+
     def __repr__(self):
         return "<Line({}) [{}]>".format(
             self.line_no,
             ", ".join(map(str, self.tokens))
         )
 
+
+class Block(Line):
+    def __init__(self, line: Line):
+        self.head = line
+        self.children = None  # type: List[Line]
+        self.parent = None
+
+    def append(self, line: Line or "Block"):
+        if self.children is None:
+            self.children = [line]
+        else:
+            self.children.append(line)
+
+        if isinstance(line, Block):
+            line.parent = self
+
+    def last_to_block(self) -> "Block":
+        block = Block(self.children.pop())
+        block.parent = self
+        self.append(block)
+        return block
+
+    def __getattr__(self, item):
+        return getattr(self.head, item)
+
+    def __repr__(self):
+        return "<Block|{}>".format(
+            self.head
+        )
 

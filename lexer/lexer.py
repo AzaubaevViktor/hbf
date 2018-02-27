@@ -1,34 +1,7 @@
 from typing import List
 
 from .error import HBFLexerError
-from .line import Line
-
-
-class Block:
-    def __init__(self, line: Line):
-        self.head = line
-        self.children = None  # type: List
-        self.parent = None
-
-    def append(self, line: Line or "Block"):
-        if self.children is None:
-            self.children = [line]
-        else:
-            self.children.append(line)
-
-        if isinstance(line, Block):
-            line.parent = self
-
-    def last_to_block(self) -> "Block":
-        block = Block(self.children.pop())
-        block.parent = self
-        self.append(block)
-        return block
-
-    def __repr__(self):
-        return "<Block|{}>".format(
-            self.head
-        )
+from .line import Line, Block
 
 
 class Lexer:
@@ -62,8 +35,4 @@ class Lexer:
             else:
                 raise HBFLexerError(line, None, "Level error", pos=line.level * line.LEVEL_SPACES)
             cur_level = line.level
-
-
-
-
 
