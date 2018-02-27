@@ -21,6 +21,16 @@ __print
 
 """
 
+registers_only = """
+reg a
+reg b
+reg c
+move c :0
+move b c
+__add 1
+move c b
+"""
+
 
 def compile(s: str):
     l = Lexer(s.split("\n"))
@@ -38,3 +48,7 @@ class TestParser:
 
         bc = compile(simple_code_with_spaces)
         assert bc == "-" * 222 + "."
+
+    def test_move(self):
+        bc = compile(registers_only)
+        assert bc == ">><+>"

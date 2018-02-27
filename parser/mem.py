@@ -18,11 +18,12 @@ class Memory:
     def __init__(self):
         self.mem = []
 
-    def alloc(self):
+    def alloc(self) -> MemoryCell:
         addr = 0
         while addr in self.mem:
             addr += 1
-        return addr
+        self.mem.append(addr)
+        return MemoryCell(addr, self)
 
     def _release(self, cell: MemoryCell):
         if cell.addr not in self.mem:
