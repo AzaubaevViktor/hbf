@@ -1,17 +1,20 @@
+import pytest
+
 from lexer import Lexer
 from parser import Parser
 
-simple_code_plus = """
+sources = [
+    ("""
 __add 1
 __print
-"""
+""", "+.", "Simple check builtin"),
 
-simple_code_minus = """
+    ("""
 __add -1
 __print
-"""
+""", "-.", "Simple check builtin"),
 
-simple_code_with_spaces = """
+    ("""
 
 __add -222     \t
 
@@ -19,9 +22,9 @@ __add -222     \t
 __print      
 
 
-"""
+""", "-" * 222 + ".", "Source with spaces"),
 
-registers_only = """
+    ("""
 reg a
 reg b
 reg c
@@ -29,24 +32,24 @@ move c :0
 move b c
 __add 1
 move c b
-"""
+""", ">><+>", "Check register allocation"),
 
-
-reg_unreg = """
+    ("""
 reg a # :0
 reg b # :1
 reg c # :2
 reg d # :3
 unreg b # kill :1
 reg e # may be :1
-move e :0  # return >
-"""
+move e :0  # return `>`
+""", ">", "Check register release"),
 
-
-cycles = """
+    ("""
 __cycle_open
 __cycle_close
-"""
+""", "[]", "Check cycle braces"),
+
+]
 
 
 def compile(s: str):
@@ -56,24 +59,7 @@ def compile(s: str):
 
 
 class TestParser:
-    def test_simple(self):
-        bc = compile(simple_code_plus)
-        assert bc == "+."
-
-        bc = compile(simple_code_minus)
-        assert bc == "-."
-
-        bc = compile(simple_code_with_spaces)
-        assert bc == "-" * 222 + "."
-
-    def test_move(self):
-        bc = compile(registers_only)
-        assert bc == ">><+>"
-
-    def test_unreg(self):
-        bc = compile(reg_unreg)
-        assert bc == ">"
-
-    def test_cycles(self):
-        bc = compile(cycles)
-        assert  bc == "[]"
+    @pytest.mark.parametrize("source, expect, msg", sources)
+    def test_compile(self, source, expect, msg):
+        bc = compile(source)
+        assert bc == expect, msg
