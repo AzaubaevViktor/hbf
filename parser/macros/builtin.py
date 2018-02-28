@@ -16,6 +16,18 @@ class MacroBuiltinRegister(Macro):
         return ""
 
 
+class MacroBuiltinUnReg(Macro):
+    def __init__(self):
+        self.name = "unreg"
+        self.arg_names = ["name"]
+        self.arg_types = [TypeName]
+
+    def _compile(self, namespace: "NameSpace", args: List[ArgumentType]):
+        reg_name = args[0].value
+        namespace.release_register(reg_name)
+        return ""
+
+
 class MacroBuiltinMoveTo(Macro):
     def __init__(self):
         self.name = "move"

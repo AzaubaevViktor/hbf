@@ -18,6 +18,7 @@ class Parser:
         self.ns.add_macro(MacroBuiltinPrint())
         self.ns.add_macro(MacroBuiltinRegister())
         self.ns.add_macro(MacroBuiltinMoveTo())
+        self.ns.add_macro(MacroBuiltinUnReg())
 
     @staticmethod
     def _compile(ns: NameSpace, lines: List[Line or "Block"]):

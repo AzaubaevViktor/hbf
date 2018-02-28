@@ -32,6 +32,17 @@ move c b
 """
 
 
+reg_unreg = """
+reg a # :0
+reg b # :1
+reg c # :2
+reg d # :3
+unreg b # kill :1
+reg e # may be :1
+move e :0  # return >
+"""
+
+
 def compile(s: str):
     l = Lexer(s.split("\n"))
     p = Parser(l.tree)
@@ -52,3 +63,7 @@ class TestParser:
     def test_move(self):
         bc = compile(registers_only)
         assert bc == ">><+>"
+
+    def test_unreg(self):
+        bc = compile(reg_unreg)
+        assert bc == ">"
