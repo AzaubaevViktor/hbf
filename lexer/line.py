@@ -6,6 +6,7 @@ from .token import Token
 
 class Line:
     LEVEL_SPACES = 4
+    COMMENT_CHAR = "#"
 
     def __init__(self, line_no, line):
         self.line_no = line_no
@@ -48,6 +49,8 @@ class Line:
                     yield word_pos, word
                 word = ""
                 word_pos = pos + 1
+            elif ch == Line.COMMENT_CHAR:
+                break
             else:
                 word += ch
 
@@ -62,6 +65,10 @@ class Line:
     def args(self):
         return self.tokens[1:]
 
+    @property
+    def empty(self):
+        return len(self.tokens) == 0
+
     def __repr__(self):
         return "<Line({}) [{}]>".format(
             self.line_no,
@@ -72,7 +79,7 @@ class Line:
 class Block(Line):
     def __init__(self, line: Line):
         self.head = line
-        self.children = None  # type: List[Line]
+        self.children = None  # type: List[Line or Block]
         self.parent = None
 
     def append(self, line: Line or "Block"):

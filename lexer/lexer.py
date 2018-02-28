@@ -8,12 +8,11 @@ class Lexer:
     def __init__(self, lines: List[str]):
         self.lines = []  # type: List[Line]
         for line_no, line in enumerate(lines):
-            if line.strip() != "":
-                self.lines.append(
-                    Line(line_no, line)
-                )
+            lexer_line = Line(line_no, line)
+            if not lexer_line.empty:
+                self.lines.append(lexer_line)
 
-        self.tree = None
+        self.tree = None  # type: Block
         self._to_levels()
 
     def _to_levels(self):
@@ -33,6 +32,6 @@ class Lexer:
                     cur = cur.parent
                 cur.append(line)
             else:
-                raise HBFLexerError(line, None, "Level error", pos=line.level * line.LEVEL_SPACES)
+                raise HBFLexerError(line, None, "Level error",
+                                    pos=line.level * line.LEVEL_SPACES)
             cur_level = line.level
-

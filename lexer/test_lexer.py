@@ -78,6 +78,17 @@ blocks_incorrect = blocks_correct + """
         level 2
 """
 
+comment = """
+
+# test
+level 0 # test
+    level1_1 # test
+#test
+    # fkdsaflkfdsnj kj  k jn k #jk l
+    level1_2
+    
+"""
+
 
 class TestLexer:
     def test_lexer_simple(self):
@@ -105,3 +116,15 @@ class TestLexer:
     def test_lexer_incorrect(self):
         with raises(HBFLexerError, message="level error"):
             Lexer(blocks_incorrect.split("\n"))
+
+    def test_comments(self):
+        lexer = Lexer(comment.split("\n"))
+        root_block = lexer.tree
+        assert len(root_block.children) == 1
+        block_cmd = root_block.children[0]
+
+        assert block_cmd.head.first.word == "level"
+        assert len(block_cmd.children) == 2
+        assert block_cmd.children[0].first.word == "level1_1"
+        assert block_cmd.children[1].first.word == "level1_2"
+
