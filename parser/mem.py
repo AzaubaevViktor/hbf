@@ -1,5 +1,5 @@
 class MemoryCell:
-    def __init__(self, addr: int, mem: "Memory"):
+    def __init__(self, addr: int, mem: "Memory"= None):
         self._addr = addr
         self._mem = mem
 
@@ -10,8 +10,15 @@ class MemoryCell:
         return self._addr
 
     def release(self):
-        self._mem._release(self)
+        if self._mem is not None:
+            self._mem._release(self)
         self._addr = None
+
+    def __repr__(self):
+        return "<MemoryCell{}#{}>".format(
+            ":" if self._mem is None else "",
+            self._addr
+        )
 
 
 class Memory:

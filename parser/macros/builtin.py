@@ -1,10 +1,10 @@
 from typing import List, Dict
 
 from ..arg_types import TypeInt, ArgumentType, TypeName, TypeAddress
-from .abc_macro import Macro
+from .abc_macro import MacroBuiltin
 
 
-class MacroBuiltinRegister(Macro):
+class MacroBuiltinRegister(MacroBuiltin):
     def __init__(self):
         self.name = "reg"
         self.arg_names = ["name"]
@@ -16,7 +16,7 @@ class MacroBuiltinRegister(Macro):
         return ""
 
 
-class MacroBuiltinUnReg(Macro):
+class MacroBuiltinUnReg(MacroBuiltin):
     def __init__(self):
         self.name = "unreg"
         self.arg_names = ["name"]
@@ -28,22 +28,22 @@ class MacroBuiltinUnReg(Macro):
         return ""
 
 
-class MacroBuiltinMoveTo(Macro):
+class MacroBuiltinMoveTo(MacroBuiltin):
     def __init__(self):
         self.name = "move"
         self.arg_names = ["to", "from"]
         self.arg_types = [TypeAddress, TypeAddress]
 
     def _compile(self, namespace: "NameSpace", args: Dict[str, ArgumentType]):
-        _to = args["to"].value
-        _from = args["from"].value
+        _to = args["to"].value.addr
+        _from = args["from"].value.addr
         if _from > _to:
             return "<" * (_from - _to)
         else:
             return ">" * (_to - _from)
 
 
-class MacroBuiltinAdd(Macro):
+class MacroBuiltinAdd(MacroBuiltin):
     def __init__(self):
         self.name = "__add"
         self.arg_names = ["value"]
@@ -58,7 +58,7 @@ class MacroBuiltinAdd(Macro):
             return "-" * -count
 
 
-class MacroBuiltinCycleOpen(Macro):
+class MacroBuiltinCycleOpen(MacroBuiltin):
     def __init__(self):
         self.name = "__cycle_open"
         self.arg_names = []
@@ -68,7 +68,7 @@ class MacroBuiltinCycleOpen(Macro):
         return "["
 
 
-class MacroBuiltinCycleClose(Macro):
+class MacroBuiltinCycleClose(MacroBuiltin):
     def __init__(self):
         self.name = "__cycle_close"
         self.arg_names = []
@@ -78,7 +78,7 @@ class MacroBuiltinCycleClose(Macro):
         return "]"
 
 
-class MacroBuiltinPrint(Macro):
+class MacroBuiltinPrint(MacroBuiltin):
     def __init__(self):
         self.name = "__print"
         self.arg_names = []
@@ -86,4 +86,5 @@ class MacroBuiltinPrint(Macro):
 
     def _compile(self,  namespace: "NameSpace", args: Dict[str, ArgumentType]):
         return "."
+
 
