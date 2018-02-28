@@ -43,6 +43,12 @@ move e :0  # return >
 """
 
 
+cycles = """
+__cycle_open
+__cycle_close
+"""
+
+
 def compile(s: str):
     l = Lexer(s.split("\n"))
     p = Parser(l.tree)
@@ -67,3 +73,7 @@ class TestParser:
     def test_unreg(self):
         bc = compile(reg_unreg)
         assert bc == ">"
+
+    def test_cycles(self):
+        bc = compile(cycles)
+        assert  bc == "[]"

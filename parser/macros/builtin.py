@@ -58,6 +58,26 @@ class MacroBuiltinAdd(Macro):
             return "-" * -count
 
 
+class MacroBuiltinCycleOpen(Macro):
+    def __init__(self):
+        self.name = "__cycle_open"
+        self.arg_names = []
+        self.arg_types = []
+
+    def _compile(self, namespace: "NameSpace", args: Dict[str, ArgumentType]):
+        return "["
+
+
+class MacroBuiltinCycleClose(Macro):
+    def __init__(self):
+        self.name = "__cycle_close"
+        self.arg_names = []
+        self.arg_types = []
+
+    def _compile(self, namespace: "NameSpace", args: Dict[str, ArgumentType]):
+        return "]"
+
+
 class MacroBuiltinPrint(Macro):
     def __init__(self):
         self.name = "__print"
